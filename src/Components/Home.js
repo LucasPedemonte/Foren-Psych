@@ -115,21 +115,18 @@ function Home() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("file", file);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const fileContent = event.target.result;
 
-    try {
-      const fileText = await file.text();
-      const response = await fetch(
-        process.env.REACT_APP_PRIVATE_AI_ENDPOINT_URL, // Add your API endpoint URL here
-        {
+      try {
+        const response = await fetch(`http://localhost:5001`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            text: [fileText],
+            text: [fileContent],
             link_batch: false,
             entity_detection: {
               accuracy: "high",
@@ -140,18 +137,26 @@ function Home() {
               pattern: "[UNIQUE_NUMBERED_ENTITY_TYPE]",
             },
           }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(
+            `Server responded with status ${response.status}: ${errorText}`
+          );
         }
-      );
 
-      const data = await response.json();
-      console.log("Success:", data);
-      alert("File processed successfully");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error processing file");
-    }
+        const data = await response.json();
+        console.log("Success:", data);
+        alert("File processed successfully");
+      } catch (error) {
+        console.error("Error:", error);
+        alert(`Error processing file: ${error.message}`);
+      }
+    };
+
+    reader.readAsText(file);
   };
-
 
   return (
     <ThemeProvider theme={theme}>
