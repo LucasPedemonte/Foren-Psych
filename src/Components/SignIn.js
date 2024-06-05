@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/SignIn.js
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -11,6 +12,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"; // Import your Firebase configuration
 import CustomAvatar from "../Assets/Images/Logo.png"; // Import your PNG image here
+import { AuthContext } from "../AuthContext"; // Import AuthContext
 
 const theme = createTheme({
   palette: {
@@ -24,6 +26,7 @@ const theme = createTheme({
 function SignIn() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext); // Use context
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,7 +41,8 @@ function SignIn() {
         password
       );
       console.log("Signed in successfully:", userCredential.user);
-      navigate("/Home"); // Navigate to home page on success
+      setUser({ email }); // Set user email in context
+      navigate("/home"); // Navigate to home page on success
     } catch (error) {
       setError(
         "Failed to sign in. Please check your credentials and try again."

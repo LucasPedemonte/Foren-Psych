@@ -1,16 +1,20 @@
+// src/App.js
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import SignIn from "./Components/SignIn";
 import Home from "./Components/Home";
-import "./App.css";
+import { AuthProvider } from "./AuthContext"; // Import AuthProvider
 
-const App = () => {
+function App() {
   return (
-    <Routes>
-      <Route path="/" element={<SignIn />} />
-      <Route path="/home" element={<Home />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="*" element={<SignIn />} /> {/* Default route */}
+      </Routes>
+    </AuthProvider>
   );
-};
+}
 
 export default App;
