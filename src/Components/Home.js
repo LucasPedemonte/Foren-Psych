@@ -122,7 +122,7 @@ function Home() {
     try {
       const fileText = await file.text();
       const response = await fetch(
-        process.env.REACT_APP_PRIVATE_AI_ENDPOINT_URL,
+        process.env.REACT_APP_PRIVATE_AI_ENDPOINT_URL, // Add your API endpoint URL here
         {
           method: "POST",
           headers: {
@@ -151,6 +151,7 @@ function Home() {
       alert("Error processing file");
     }
   };
+
 
   return (
     <ThemeProvider theme={theme}>
