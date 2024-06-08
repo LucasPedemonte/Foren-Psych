@@ -132,7 +132,7 @@ function Home() {
     };
 
     try {
-      const response = await fetch('https://api.private-ai.com/deid/v3/process/text', {
+      const response = await fetch('http://localhost:5001/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
