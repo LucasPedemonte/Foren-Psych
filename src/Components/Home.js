@@ -115,43 +115,29 @@ function Home() {
       return;
     }
 
-    const apiKey = '49ec5e3b62eb484ea048f3ed1b28e8f6'; // replace with your actual API key
-    const data = {
-      text: [
-        "Hello John and Jane"
-      ],
-      link_batch: false,
-      entity_detection: {
-        accuracy: "high",
-        return_entity: true
-      },
-      processed_text: {
-        type: "MARKER",
-        pattern: "[UNIQUE_NUMBERED_ENTITY_TYPE]"
-      }
-    };
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("email", email); // Add other necessary fields if required
 
     try {
-      const response = await fetch('http://localhost:5001/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-        },
-        body: JSON.stringify(data),
+      const response = await fetch(`http://localhost:5001/upload`, {
+        method: "POST",
+        body: formData,
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Server responded with status ${response.status}: ${errorText}`);
+        throw new Error(
+          `Server responded with status ${response.status}: ${errorText}`
+        );
       }
 
-      const responseData = await response.json();
-      console.log('Success:', responseData);
-      alert('File uploaded and processed successfully');
+      const data = await response.json();
+      console.log("Success:", data);
+      alert("File processed successfully");
     } catch (error) {
-      console.error('Error:', error);
-      alert(`Error uploading file: ${error.message}`);
+      console.error("Error:", error);
+      alert(`Error processing file: ${error.message}`);
     }
   };
 
