@@ -41,7 +41,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     const payload = {
       file: {
         data: fileContentBase64,
-        content_type: "application/xml", // Change this if the file type is different
+        content_type: "application/pdf", // Change this if the file type is different
       },
       entity_detection: {
         accuracy: "high",
