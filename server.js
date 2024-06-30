@@ -79,26 +79,8 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
         // Extract the file content text from the response
 
-        // Send the extracted text to ChatGPT with a prompt
-        const chatGptResponse = await axios.post(
-          "https://api.openai.com/v1/engines/davinci-codex/completions",
-          {
-            prompt: `Here is the text extracted from the PDF:\n\n${fileTextContent}\n\nPlease summarize this document.`,
-            max_tokens: 1500,
-            temperature: 0.5,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer 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`,
-            },
-          }
-        );
-
         res.json({
           message: "File uploaded, processed, and summarized successfully",
-          extractedText: fileTextContent,
-          chatGptResponse: chatGptResponse.data,
         });
       })
       .catch((error) => {
