@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const axios = require("axios"); // Import axios for making HTTP requests
+const axios = require("axios");
 
 const app = express();
 const PORT = 5001;
@@ -46,6 +46,20 @@ app.post("/upload", upload.single("file"), (req, res) => {
       entity_detection: {
         accuracy: "high",
         return_entity: true,
+        entity_types: [
+          {
+            type: "ENABLE",
+            value: ["NAME"],
+          },
+          {
+            type: "ENABLE",
+            value: ["DOB"],
+          },
+          {
+            type: "ENABLE",
+            value: ["CONDITION"],
+          },
+        ],
       },
     };
 
@@ -57,11 +71,34 @@ app.post("/upload", upload.single("file"), (req, res) => {
     // Make the API request
     axios
       .post(apiUrl, payload, { headers })
-      .then((response) => {
+      .then(async (response) => {
         console.log("Success:", response.data);
+
+        const processedText = response.data.processed_text;
+        console.log(processedText);
+
+        // Extract the file content text from the response
+
+        // Send the extracted text to ChatGPT with a prompt
+        const chatGptResponse = await axios.post(
+          "https://api.openai.com/v1/engines/davinci-codex/completions",
+          {
+            prompt: `Here is the text extracted from the PDF:\n\n${fileTextContent}\n\nPlease summarize this document.`,
+            max_tokens: 1500,
+            temperature: 0.5,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer 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`,
+            },
+          }
+        );
+
         res.json({
-          message: "File uploaded and processed successfully",
-          apiResponse: response.data,
+          message: "File uploaded, processed, and summarized successfully",
+          extractedText: fileTextContent,
+          chatGptResponse: chatGptResponse.data,
         });
       })
       .catch((error) => {
