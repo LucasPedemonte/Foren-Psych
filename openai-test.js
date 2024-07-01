@@ -2,15 +2,51 @@ const OpenAI = require("openai");
 
 const openai = new OpenAI({
     apiKey: 'sk-proj-ldIeacPdqtgCVQn004vZT3BlbkFJtgKXblehrTA3eMhOcWEg',
-  });
+});
 
-async function main() {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "system", content: "You are a helpful assistant." }],
-    model: "gpt-3.5-turbo",
-  });
+async function getAssistant() {
+    try {
+        const assistant = await openai.beta.assistants.retrieve(
+            "asst_kpmxgdVKEFW2eJF9VdHLvNsY"
+        );
 
-  console.log(completion.choices[0]);
+        // Create a new thread
+        const thread = await openai.beta.threads.create();
+
+        // Add a message to the thread
+        const message = await openai.beta.threads.messages.create(thread.id, {
+            role: "user",
+            content:"The Honorable Judge Kelly V. Simmons Superior Court of California County of Marin 3501 Civic Center Dr. PO Box 4988 San Rafael, CA 94913-4988 September 9, 2020 Re: People v. X et. al. Superior Court # Dear Judge Simmons: Pursuant to your request for an EC 730, X was evaluated for competency in Marin County Jail on September 9, 2020. He was informed about the nature of this evaluation, that it was a competency evaluation and that it was referred by the court. Further, he was told that it was not confidential. He agreed to this and was given an information sheet in both Spanish and English to that effect. The interview was conducted in Spanish, for approximately 90 minutes with social distancing precautions due to COVID-19. Materials Reviewed Jail Psychiatric Services Records, Including 81 pages of Safety Cell Records Charging document Summary of facts from People’s Opposition to Treatment for Complaints He has been prescribed Vistaril, an antihistamine, on 9/5. Otherwise he has not received any psychiatric medication or specific treatment. History of Presenting Illness Mr. X is a El Salvadorean man who reports that he was in his usual state of health until last Wednesday evening when he took what he believed to be a combination of heroin and methamphetamine. He says it was a black “waxy” pill. He reports that he does not remember much of the next two days, and that on Saturday he remembers being very confused, and hearing voices talking about him and his case, either from the television or, when it was off, the prisoners themselves. “The voices told me that they would get louder and louder if I didn’t plead guilty.” He felt that at some points on Friday the voices were “so loud that my stomach hurt.” His attorneys have known him since 2016. He was arrested and went through multiple court hearings. He reports that is why he has been learning English, in order to self-advocate. He reports that he does feel emotions in court, but he tries to focus on what he can do, which is to take notes, and then to work on his case. He did have a court appearance while symptomatic after ingesting the drug(s). “I may be suicidal because of my case and my current situation.” (p.42) He reported ingesting methamphetamine as well as placing it inside his rectum. Other than one increased blood pressure reading (BP 150/84 on 9/6/20 at 1800), his vital signs were generally stable. The 9/6 note reports patient stating he had a longer history of methamphetamine use. He did express a wish to have his “blood cleaned.” This is culturally appropriate. This is also what he had reported to me. He demonstrated increased religious practices over the weekend in comparison to his behavior prior to ingesting the drug(s). JPS note reported that patient heard voices coming through the ventilation grates and the intercom, discussing his case. Multiple evaluators throughout the course of patient’s stay in the safety cell were monolingual in English, and often there were no qualified translators used but rather translators of opportunity (custody officers, etc). There was clear progression noted o , Kyle Hara, who interviewed patient with jail psychiatrist, noted a history of patient taking methamphetamine on Wednesday, with subsequent hallucinations and ideas of reference. He had an idea that he had been sentenced to death by the judge. The diagnosis was Methamphetamine Induced Psychosis. Mr. X reports that on the morning of the voice through the television, which is just outside his cell. He heard him saying “We know he is guilty,” in English. But he was able to stop it by “plugging my ears.” He had not had subsequent hallucinations that day, whether through the television or by thinking that the fellow prisoners were speaking about his case. He denies any nightmares, intrusive memories, flashbacks, or startle response to his prior traumas. “I am always positive, future oriented.” Medical History: He denies any medical issues. “They gave me all my vaccinations at the border.” Substance Use History: Significant marijuana use since age 12 until incarceration. Reports rare alcohol use, approximately 5 times. Variable reports of other drug use, ranging from “once or twice” to more regular use of heroin and crystal. “The first time I did it I was relaxed, itchy, nothing else.” Urine drug test done 9/8: negative. Psychiatric history: He denies any prior psychiatric history. However, he reports long stretches of time while incarcerated when “I just stay in bed all day; I don’t really sleep; I don’t want to do anything.” At times he thought of suicide, but did not act due to his mother and his sisters. At other times he will try to develop a routine. Unclear prior suicidality – He has been in custody, and there are no psychiatric records prior to this past week. Social and Family History: Mr. X’ He was born in El Salvador, or possibly great-aunt, it was unclear). That was when he began smoking marijuana and stopped trying at school. His mother was raised by her grandmother, so she was never close to her own mother. He reports that his younger half-sister has anxiety. His maternal grandfather was an alcoholic. His maternal great grandfather committed suicide. He has a paternal cousin who is an alcoholic. His educational history was limited after his mother left. He did not complete his GED. However, he reports that he has been “reading the dictionary word by word…well, not every word” in order to learn English so that he can assist with his case. He reports that he has practiced with custody officials. Mr. X immigrated to the US alone, over X had difficulty assessing the social dynamics in the US. Although there were gangs and drugs in both El Salvador and the US, “there were only two in El Salvador – two gangs, and two drugs – alcohol and marijuana.” In the US there were “thousands” of gangs and they operated differently – it wasn’t about caring for each other. He says he had trouble distinguishing between who was “pretend” gangsters and who were “fanatics.” Mental Status Exam Mr. X was in a jail uniform, with wrist/ankle restraints and plastic shoes. His hair was brushed. He was shaved. He was cooperative. Eye contact was good, not intense. Speech (in Spanish) demonstrated good prosody with regular rate and rhythm. There was no psychomotor agitation or retardation. His affect was slightly anxious. His mood was anxious. Thought process was linear to questions. There was no evidence of thought blocking. Thought content: no suicidality, “I have thought about it but I would not do it because of my mother and my sisters.” He denied any auditory hallucinations since early this morning. He denied visual hallucinations, homicidal ideation, paranoid ideation, ideas of reference, thought broadcasting. He was concerned about his recent disturbing experience and his upcoming case. “The only help I have is my mother.” Summary: Mr. X suffered from an acute Substance Induced Psychotic Disorder, likely due to methamphetamine and heroin. The negative urine drug screen on is not useful; by that point most substances ingested on would no longer be detectable in the urine. There are certainly variations to his history. That is not surprising given the forensic context and the fundamental difficulty of establishing a historical timeline while intoxicated and/or psychotic. Overall, the patient’s history is consistent with the medical record documentation from Jail Psychiatric Services and the history provided by his attorney. While X is at risk for a psychotic disorder in the future, it appears that at this point he has almost completely recovered. He may have residual symptoms for the next month. He is at risk for future illness due to this episode, and due to his use of substances. He could benefit from supportive psychotherapy to address his many losses and traumas, but that is distinct from the purpose of this evaluation. Complicating factors in this case include gang politics and family dynamics. There may be some element of PTSD, but his reticence to discuss his symptoms prevents a diagnosis of that. The reported symptom of hearing his name called is consistent with PTSD, and independent of any psychotic disorder. In terms of the criteria that comprises 1368 of the California Penal Code, it is my opinion that Mr. X is able to understand the nature and purposes of proceedings taken against him. He is conscious of dates and charges and chronology of events. He was well versed on what the purpose of this proceeding was. He was able to cooperate in a rational manner with counsel on presenting defense. Mr. X is able to understand the criminal proceedings and assist counsel. I believe that it is not appropriate or necessary for him to get treatment such as medication or psychotherapy in order to work on his defense. Assessment of danger to others I will respectfully defer to the judicial system. There is not a particular psychiatric diagnosis which places him at risk for acute danger to others. Of note, this is a competency examination, not a comprehensive assessment. Based on the above evaluation, I found him to be trial competent. Respectfully submitted, Laura C. Davies, MD Diplomate, American Board of Psychiatry and Neurology"
+        });
+
+        // Run the assistant on the thread
+        const run = await openai.beta.threads.runs.create(thread.id, {
+            assistant_id: assistant.id
+        });
+
+        let responseReceived = false;
+        while (!responseReceived) {
+            const messages = await openai.beta.threads.messages.list(thread.id);
+
+            // Check if the assistant's response is in the messages
+            for (let msg of messages.data) {
+                if (msg.role === "assistant" && msg.content.length > 0) {
+                    console.log("Assistant's response:", msg.content);
+                    responseReceived = true;
+                    break;
+                }
+            }
+
+            // Wait for a while before polling again
+            if (!responseReceived) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+
+    } catch (error) {
+        console.error("Error retrieving assistant:", error);
+    }
 }
 
-main();
+getAssistant();
+
