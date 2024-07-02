@@ -5,6 +5,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
+const AWS = require("aws-sdk");
+require("dotenv").config();
 
 const app = express();
 const PORT = 5001;
@@ -20,14 +22,18 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" })); // Increase t
 app.post("/upload", upload.single("file"), (req, res) => {
   try {
     const file = req.file;
+    const recipientEmail = req.body.email; // Get the email from the request body
 
-    if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
+    if (!file || !recipientEmail) {
+      return res
+        .status(400)
+        .json({ error: "No file uploaded or email provided" });
     }
 
     // Log file details to the console for debugging
     console.log(`File uploaded: ${file.originalname}`);
     console.log(`File saved to: ${file.path}`);
+    console.log(`Email: ${recipientEmail}`);
 
     // Read the file content
     const fileContent = fs.readFileSync(file.path);
@@ -37,6 +43,51 @@ app.post("/upload", upload.single("file"), (req, res) => {
     // Prepare payload for the API request
     const apiUrl = "https://api.private-ai.com/deid/v3/process/files/base64";
     const apiKey = "49ec5e3b62eb484ea048f3ed1b28e8f6";
+    const SES_CONFIG = {
+      accessKeyId: process.env.AWS_SES_KEY,
+      secretAccessKey: process.env.AWS_SES_SECRET_KEY,
+      region: process.env.AWS_REGION,
+    };
+
+    const AWS_SES = new AWS.SES(SES_CONFIG);
+
+    const sendEmail = async (recipientEmail, subject, body) => {
+      const params = {
+        Source: process.env.SOURCE_EMAIL,
+        Destination: {
+          ToAddresses: [recipientEmail],
+        },
+        Message: {
+          Subject: {
+            Data: subject,
+          },
+          Body: {
+            Text: {
+              Data: body,
+            },
+          },
+        },
+      };
+
+      console.log("Sending email with the following parameters:");
+      console.log(params);
+
+      try {
+        const result = await AWS_SES.sendEmail(params).promise();
+        console.log(`Email sent to ${recipientEmail}`, result);
+      } catch (error) {
+        console.error(`Error sending email to ${recipientEmail}`, error);
+        if (error.code) {
+          console.error(`Error code: ${error.code}`);
+        }
+        if (error.message) {
+          console.error(`Error message: ${error.message}`);
+        }
+        if (error.stack) {
+          console.error(`Error stack: ${error.stack}`);
+        }
+      }
+    };
 
     const payload = {
       file: {
@@ -77,10 +128,14 @@ app.post("/upload", upload.single("file"), (req, res) => {
         const processedText = response.data.processed_text;
         console.log(processedText);
 
-        // Extract the file content text from the response
+        // Send the processed text via email
+        const subject = "Processed File Content";
+        const body = processedText;
+
+        await sendEmail(recipientEmail, subject, body);
 
         res.json({
-          message: "File uploaded, processed, and summarized successfully",
+          message: "File uploaded, processed, and email sent successfully",
         });
       })
       .catch((error) => {
