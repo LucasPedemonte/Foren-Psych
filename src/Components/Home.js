@@ -120,7 +120,7 @@ function Home() {
     formData.append("email", email); // Add other necessary fields if required
 
     try {
-      const response = await fetch(`http://localhost:5001/upload`, {
+      const response = await fetch(`/api/upload`, {
         method: "POST",
         body: formData,
       });
