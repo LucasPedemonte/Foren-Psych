@@ -42,7 +42,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
     // Prepare payload for the API request
     const apiUrl = "https://api.private-ai.com/deid/v3/process/files/base64";
-    const apiKey = "49ec5e3b62eb484ea048f3ed1b28e8f6";
+    const apiKey = process.env.PRIVATE_AI_API_KEY;
     const SES_CONFIG = {
       accessKeyId: process.env.AWS_SES_KEY,
       secretAccessKey: process.env.AWS_SES_SECRET_KEY,
