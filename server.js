@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
 const AWS = require("aws-sdk");
+const getAssistant = require("./src/openai-test"); // Adjusted path
 require("dotenv").config();
 
 const app = express();
@@ -19,7 +20,7 @@ app.use(bodyParser.json({ limit: "10mb" })); // Increase the body limit
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" })); // Increase the body limit
 
 // Endpoint to handle file uploads
-app.post("/upload", upload.single("file"), (req, res) => {
+app.post("/upload", upload.single("file"), async (req, res) => {
   try {
     const file = req.file;
     const recipientEmail = req.body.email; // Get the email from the request body
@@ -120,36 +121,45 @@ app.post("/upload", upload.single("file"), (req, res) => {
     };
 
     // Make the API request
-    axios
-      .post(apiUrl, payload, { headers })
-      .then(async (response) => {
-        console.log("Success:", response.data);
+    const response = await axios.post(apiUrl, payload, { headers });
+    console.log("Success:", response.data);
 
-        const processedText = response.data.processed_text;
-        console.log(processedText);
+    const processedText = response.data.processed_text;
+    console.log(processedText);
 
-        // Send the processed text via email
-        const subject = "Processed File Content";
-        const body = processedText;
+    const assistantResponse = await getAssistant(processedText);
+    console.log("Assistant Response:", assistantResponse);
 
-        await sendEmail(recipientEmail, subject, body);
+    // Extract the text value from the assistant response
+    let body;
+    if (
+      assistantResponse &&
+      Array.isArray(assistantResponse) &&
+      assistantResponse[0].text &&
+      assistantResponse[0].text.value
+    ) {
+      body = assistantResponse[0].text.value;
+    } else {
+      console.error("Unexpected response structure:", assistantResponse);
+      body = "There was an error processing your request.";
+    }
 
-        res.json({
-          message: "File uploaded, processed, and email sent successfully",
-        });
-      })
-      .catch((error) => {
-        console.error(
-          "Error making API request:",
-          error.response ? error.response.data : error.message
-        );
-        res
-          .status(500)
-          .json({ error: "Error making API request", details: error.message });
-      });
+    // Send the processed text via email
+    const subject = "Processed File Content";
+
+    await sendEmail(recipientEmail, subject, body);
+
+    res.json({
+      message: "File uploaded, processed, and email sent successfully",
+    });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: error.message });
+    console.error(
+      "Error making API request:",
+      error.response ? error.response.data : error.message
+    );
+    res
+      .status(500)
+      .json({ error: "Error making API request", details: error.message });
   }
 });
 
