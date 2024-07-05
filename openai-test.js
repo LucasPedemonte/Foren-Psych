@@ -1,3 +1,4 @@
+require("dotenv").config();
 const OpenAI = require("openai");
 
 const openai = new OpenAI({
@@ -6,9 +7,7 @@ const openai = new OpenAI({
 
 async function getAssistant(inputString) {
     try {
-        const assistant = await openai.beta.assistants.retrieve(
-            "asst_kpmxgdVKEFW2eJF9VdHLvNsY"
-        );
+        const assistant = await openai.beta.assistants.retrieve('asst_kpmxgdVKEFW2eJF9VdHLvNsY');
 
         // Create a new thread
         const thread = await openai.beta.threads.create();
@@ -31,7 +30,8 @@ async function getAssistant(inputString) {
             // Check if the assistant's response is in the messages
             for (let msg of messages.data) {
                 if (msg.role === "assistant" && msg.content.length > 0) {
-                    return(msg.content.text.value);
+                  console.log(msg.content);  
+                  return(msg.content);
                 }
             }
 
@@ -44,5 +44,7 @@ async function getAssistant(inputString) {
     } catch (error) {
         console.error("Error retrieving assistant:", error);
     }
+
 }
 
+getAssistant("hahahah this is a test analyze this bitch");
