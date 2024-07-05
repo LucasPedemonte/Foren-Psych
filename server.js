@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -6,11 +7,10 @@ const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
 const AWS = require("aws-sdk");
-const getAssistant = require("./src/openai-test"); // Adjusted path
-require("dotenv").config();
+const getAssistant = require("./src/openai-test");
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 // Configure multer for file uploads
 const upload = multer({ dest: "uploads/" });
@@ -19,8 +19,11 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "10mb" })); // Increase the body limit
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" })); // Increase the body limit
 
+// Serve static files from the 'build' directory
+app.use(express.static(path.join(__dirname, "build")));
+
 // Endpoint to handle file uploads
-app.post("/upload", upload.single("file"), async (req, res) => {
+app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
     const file = req.file;
     const recipientEmail = req.body.email; // Get the email from the request body
@@ -161,6 +164,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       .status(500)
       .json({ error: "Error making API request", details: error.message });
   }
+});
+
+// Default route to serve your frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
 
 app.listen(PORT, () => {
