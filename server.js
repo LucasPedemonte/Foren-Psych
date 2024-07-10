@@ -26,7 +26,7 @@ const ses = new SESClient({ region: process.env.AWS_REGION });
 
 // Endpoint to handle file uploads
 app.post(
-  "https://foren-psych-596d1c939bc9.herokuapp.com",
+  "/upload", // Corrected the route
   upload.single("file"),
   async (req, res) => {
     try {
@@ -52,7 +52,7 @@ app.post(
       const payload = {
         file: {
           data: fileContentBase64,
-          content_type: "application/pdf", // Change this if the file type is different
+          content_type: file.mimetype, // Use the MIME type of the uploaded file
         },
         entity_detection: {
           accuracy: "high",
@@ -139,12 +139,10 @@ app.post(
         "Error processing the request:",
         error.response ? error.response.data : error.message
       );
-      res
-        .status(500)
-        .json({
-          error: "Error processing the request",
-          details: error.message,
-        });
+      res.status(500).json({
+        error: "Error processing the request",
+        details: error.message,
+      });
     }
   }
 );

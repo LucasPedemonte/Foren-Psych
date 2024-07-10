@@ -120,13 +120,10 @@ function Home() {
     formData.append("email", email); // Add other necessary fields if required
 
     try {
-      const response = await fetch(
-        `https://foren-psych-596d1c939bc9.herokuapp.com`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`/upload`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
