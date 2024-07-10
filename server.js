@@ -22,7 +22,13 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "build")));
 
 // Configure AWS SES client
-const ses = new SESClient({ region: process.env.AWS_REGION });
+const ses = new SESClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 // Endpoint to handle file uploads
 app.post(
