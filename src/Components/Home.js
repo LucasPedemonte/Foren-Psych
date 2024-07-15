@@ -1,4 +1,6 @@
+// src/Components/Home.js
 import React, { useState, useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -120,31 +122,25 @@ function Home() {
     formData.append("email", email); // Add other necessary fields if required
 
     try {
-      const response = await fetch(`/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `Server responded with status ${response.status}: ${errorText}`
-        );
-      }
-
-      const data = await response.json();
-      console.log("Success:", data);
-      alert("File processed successfully");
+      console.log("Form Data:", Object.fromEntries(formData.entries()));
+      alert("Form submitted successfully");
     } catch (error) {
       console.error("Error:", error);
-      alert(`Error processing file: ${error.message}`);
+      alert(`Error processing form: ${error.message}`);
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ position: "absolute", top: 8, right: 8 }}>
+        <Link to="/contact">
+          <Button variant="contained" color="secondary">
+            Contact Us
+          </Button>
+        </Link>
+      </Box>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
