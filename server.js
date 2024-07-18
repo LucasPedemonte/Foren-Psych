@@ -107,7 +107,7 @@ app.post(
 
       const subject = "Processed File Content";
 
-      // Function to send the processed text via email
+      // Function to send the processed text via email using NodeMailer
       const sendEmail = async (recipientEmail, subject, body) => {
         const mailOptions = {
           from: process.env.EMAIL_USER,
