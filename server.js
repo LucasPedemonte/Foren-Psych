@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -36,10 +37,13 @@ app.post(
   upload.single("file"),
   async (req, res) => {
     try {
+      console.log("Request received");
+
       const file = req.file;
       const recipientEmail = req.body.email;
 
       if (!file || !recipientEmail) {
+        console.log("Missing file or email");
         return res
           .status(400)
           .json({ error: "No file uploaded or email provided" });
