@@ -1,12 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const axios = require("axios");
-const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
+const nodemailer = require("nodemailer");
 const getAssistant = require("./src/openai-test");
-var nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -22,13 +22,35 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 // Serve static files from the 'build' directory
 app.use(express.static(path.join(__dirname, "build")));
 
-// Configure AWS SES client
-var transporter = nodemailer.createTransport({
+// Ensure environment variables are loaded
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+console.log("PRIVATE_AI_API_KEY:", process.env.PRIVATE_AI_API_KEY);
+
+if (
+  !process.env.EMAIL_USER ||
+  !process.env.EMAIL_PASS ||
+  !process.env.PRIVATE_AI_API_KEY
+) {
+  console.error("Missing environment variables");
+  process.exit(1);
+}
+
+// Configure NodeMailer transporter
+const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("Error with NodeMailer transporter configuration:", error);
+  } else {
+    console.log("NodeMailer transporter configured successfully");
+  }
 });
 
 // Endpoint to handle file uploads
@@ -37,10 +59,13 @@ app.post(
   upload.single("file"),
   async (req, res) => {
     try {
+      console.log("Request received");
+
       const file = req.file;
       const recipientEmail = req.body.email;
 
       if (!file || !recipientEmail) {
+        console.log("Missing file or email");
         return res
           .status(400)
           .json({ error: "No file uploaded or email provided" });
@@ -106,31 +131,23 @@ app.post(
 
       // Function to send the processed text via email
       const sendEmail = async (recipientEmail, subject, body) => {
-        var mailOptions = {
+        const mailOptions = {
           from: process.env.EMAIL_USER,
           to: recipientEmail,
-          subject: "ForenPsych Report",
+          subject: subject,
           text: body,
         };
 
+        console.log("Sending email with the following parameters:");
+        console.log(mailOptions);
+
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
-            console.log(error);
+            console.log("Error sending email:", error);
           } else {
             console.log("Email sent: " + info.response);
           }
         });
-
-        console.log("Sending email with the following parameters:");
-        console.log(params);
-
-        try {
-          const result = await ses.send(new SendEmailCommand(params));
-          console.log(`Email sent to ${recipientEmail}`, result);
-        } catch (error) {
-          console.error(`Error sending email to ${recipientEmail}`, error);
-          throw error;
-        }
       };
 
       // Send the processed text via email
