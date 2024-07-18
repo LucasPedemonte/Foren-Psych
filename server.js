@@ -6,6 +6,7 @@ const path = require("path");
 const axios = require("axios");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const getAssistant = require("./src/openai-test");
+var nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -22,11 +23,11 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "build")));
 
 // Configure AWS SES client
-const ses = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_SES_KEY,
-    secretAccessKey: process.env.AWS_SES_SECRET_KEY,
+var transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -105,22 +106,20 @@ app.post(
 
       // Function to send the processed text via email
       const sendEmail = async (recipientEmail, subject, body) => {
-        const params = {
-          Source: process.env.SOURCE_EMAIL,
-          Destination: {
-            ToAddresses: [recipientEmail],
-          },
-          Message: {
-            Subject: {
-              Data: subject,
-            },
-            Body: {
-              Text: {
-                Data: body,
-              },
-            },
-          },
+        var mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: recipientEmail,
+          subject: "ForenPsych Report",
+          text: body,
         };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
 
         console.log("Sending email with the following parameters:");
         console.log(params);
