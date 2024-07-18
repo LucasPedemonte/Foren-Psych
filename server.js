@@ -1,11 +1,10 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const axios = require("axios");
-const nodemailer = require("nodemailer");
+const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const getAssistant = require("./src/openai-test");
 
 const app = express();
@@ -22,12 +21,12 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 // Serve static files from the 'build' directory
 app.use(express.static(path.join(__dirname, "build")));
 
-// Configure NodeMailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail", // or use any other email service
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+// Configure AWS SES client
+const ses = new SESClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_SES_KEY,
+    secretAccessKey: process.env.AWS_SES_SECRET_KEY,
   },
 });
 
@@ -37,13 +36,10 @@ app.post(
   upload.single("file"),
   async (req, res) => {
     try {
-      console.log("Request received");
-
       const file = req.file;
       const recipientEmail = req.body.email;
 
       if (!file || !recipientEmail) {
-        console.log("Missing file or email");
         return res
           .status(400)
           .json({ error: "No file uploaded or email provided" });
@@ -107,20 +103,30 @@ app.post(
 
       const subject = "Processed File Content";
 
-      // Function to send the processed text via email using NodeMailer
+      // Function to send the processed text via email
       const sendEmail = async (recipientEmail, subject, body) => {
-        const mailOptions = {
-          from: process.env.EMAIL_USER,
-          to: recipientEmail,
-          subject: subject,
-          text: body,
+        const params = {
+          Source: process.env.SOURCE_EMAIL,
+          Destination: {
+            ToAddresses: [recipientEmail],
+          },
+          Message: {
+            Subject: {
+              Data: subject,
+            },
+            Body: {
+              Text: {
+                Data: body,
+              },
+            },
+          },
         };
 
         console.log("Sending email with the following parameters:");
-        console.log(mailOptions);
+        console.log(params);
 
         try {
-          const result = await transporter.sendMail(mailOptions);
+          const result = await ses.send(new SendEmailCommand(params));
           console.log(`Email sent to ${recipientEmail}`, result);
         } catch (error) {
           console.error(`Error sending email to ${recipientEmail}`, error);
