@@ -122,11 +122,24 @@ function Home() {
     formData.append("email", email); // Add other necessary fields if required
 
     try {
-      console.log("Form Data:", Object.fromEntries(formData.entries()));
-      alert("Form submitted successfully");
+      const response = await fetch(`/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Server responded with status ${response.status}: ${errorText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+      alert("File processed successfully");
     } catch (error) {
       console.error("Error:", error);
-      alert(`Error processing form: ${error.message}`);
+      alert(`Error processing file: ${error.message}`);
     }
   };
 
