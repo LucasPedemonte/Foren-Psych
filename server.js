@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const axios = require("axios");
-const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
+const nodemailer = require("nodemailer");
 const getAssistant = require("./src/openai-test");
 
 const app = express();
@@ -21,12 +21,12 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 // Serve static files from the 'build' directory
 app.use(express.static(path.join(__dirname, "build")));
 
-// Configure AWS SES client
-const ses = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_SES_KEY,
-    secretAccessKey: process.env.AWS_SES_SECRET_KEY,
+// Configure NodeMailer transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail", // or use any other email service
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -105,28 +105,18 @@ app.post(
 
       // Function to send the processed text via email
       const sendEmail = async (recipientEmail, subject, body) => {
-        const params = {
-          Source: process.env.SOURCE_EMAIL,
-          Destination: {
-            ToAddresses: [recipientEmail],
-          },
-          Message: {
-            Subject: {
-              Data: subject,
-            },
-            Body: {
-              Text: {
-                Data: body,
-              },
-            },
-          },
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: recipientEmail,
+          subject: subject,
+          text: body,
         };
 
         console.log("Sending email with the following parameters:");
-        console.log(params);
+        console.log(mailOptions);
 
         try {
-          const result = await ses.send(new SendEmailCommand(params));
+          const result = await transporter.sendMail(mailOptions);
           console.log(`Email sent to ${recipientEmail}`, result);
         } catch (error) {
           console.error(`Error sending email to ${recipientEmail}`, error);
