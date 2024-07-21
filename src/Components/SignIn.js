@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -11,7 +11,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"; // Import your Firebase configuration
 import CustomAvatar from "../Assets/Images/Logo.png"; // Import your PNG image here
-import { AuthContext } from "../AuthContext"; // Import AuthContext
+import { useAuth } from "../AuthContext"; // Use useAuth hook
 
 const theme = createTheme({
   palette: {
@@ -34,7 +34,7 @@ const theme = createTheme({
 function SignIn() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext); // Use context
+  const { login } = useAuth(); // Use useAuth hook
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,7 +49,7 @@ function SignIn() {
         password
       );
       console.log("Signed in successfully:", userCredential.user);
-      setUser({ email }); // Set user email in context
+      login({ email }); // Use login function from context
       navigate("/home"); // Navigate to home page on success
     } catch (error) {
       setError(
