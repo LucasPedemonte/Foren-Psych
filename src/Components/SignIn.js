@@ -1,4 +1,3 @@
-// src/SignIn.js
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
@@ -18,7 +17,16 @@ const theme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#00141F",
+      default: "#000000", // Black
+    },
+    primary: {
+      main: "#000000", // Black
+    },
+    secondary: {
+      main: "#0B8A5E", // Secondary color
+    },
+    tertiary: {
+      main: "#3B3B3B", // Grey
     },
   },
 });
@@ -90,7 +98,7 @@ function SignIn() {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 1 }}
+            sx={{ mt: 1, width: "100%" }}
           >
             <TextField
               margin="normal"
@@ -101,6 +109,7 @@ function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              sx={{ width: "100%" }}
             />
             <TextField
               margin="normal"
@@ -111,6 +120,7 @@ function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              sx={{ width: "100%" }}
             />
             {error && (
               <Typography color="error" variant="body2" align="center">
@@ -120,8 +130,14 @@ function SignIn() {
             <Button
               type="submit"
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              variant="outlined"
+              color="secondary"
+              sx={{
+                mt: 3,
+                mb: 2,
+                borderColor: theme.palette.tertiary.main,
+                color: theme.palette.text.primary,
+              }}
             >
               Sign In
             </Button>

@@ -15,13 +15,16 @@ const theme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#00141F",
+      default: "#000000", // Black
     },
     primary: {
-      main: "#90CAF9",
+      main: "#000000", // Black
     },
     secondary: {
-      main: "#64B5F6",
+      main: "#0B8A5E", // Secondary color
+    },
+    tertiary: {
+      main: "#3B3B3B", // Grey
     },
   },
 });
@@ -47,12 +50,12 @@ const FileInputWrapper = styled("div")(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     cursor: "pointer",
     textAlign: "center",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.main,
     color: theme.palette.primary.contrastText,
     fontWeight: "bold",
     transition: "background-color 0.3s, transform 0.3s",
     "&:hover": {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette.secondary.dark,
       transform: "scale(1.05)",
     },
   },
@@ -233,8 +236,14 @@ function Home() {
               <Button
                 type="submit"
                 fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                variant="outlined"
+                color="secondary"
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  borderColor: theme.palette.tertiary.main,
+                  color: "white",
+                }}
               >
                 Submit
               </Button>
