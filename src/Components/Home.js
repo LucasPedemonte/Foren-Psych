@@ -1,4 +1,3 @@
-// src/Components/Home.js
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
@@ -89,6 +88,7 @@ function Home() {
   const { user } = useContext(AuthContext); // Use context to get user
   const [email, setEmail] = useState(user ? user.email : "");
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   useEffect(() => {
     if (user) {
@@ -117,6 +117,8 @@ function Home() {
       return;
     }
 
+    setIsLoading(true); // Set loading to true
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("email", email); // Add other necessary fields if required
@@ -140,6 +142,8 @@ function Home() {
     } catch (error) {
       console.error("Error:", error);
       alert(`Error processing file: ${error.message}`);
+    } finally {
+      setIsLoading(false); // Set loading to false
     }
   };
 
@@ -185,51 +189,57 @@ function Home() {
           <Typography component="h1" variant="h5">
             Upload File and Submit Email
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1, width: "100%" }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={handleEmailChange}
-              sx={{ width: "100%" }}
-            />
-            <FileInputWrapper>
-              <label htmlFor="file">Choose File</label>
-              <div className="file-name">
-                {file ? file.name : "No file chosen"}
-              </div>
-              <input
-                type="file"
-                id="file"
-                name="file"
-                onChange={handleFileChange}
-              />
-              {file && (
-                <RemoveFileButton onClick={handleRemoveFile}>
-                  X
-                </RemoveFileButton>
-              )}
-            </FileInputWrapper>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+          {isLoading ? (
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              Loading...
+            </Typography>
+          ) : (
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1, width: "100%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={email}
+                onChange={handleEmailChange}
+                sx={{ width: "100%" }}
+              />
+              <FileInputWrapper>
+                <label htmlFor="file">Choose File</label>
+                <div className="file-name">
+                  {file ? file.name : "No file chosen"}
+                </div>
+                <input
+                  type="file"
+                  id="file"
+                  name="file"
+                  onChange={handleFileChange}
+                />
+                {file && (
+                  <RemoveFileButton onClick={handleRemoveFile}>
+                    X
+                  </RemoveFileButton>
+                )}
+              </FileInputWrapper>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Submit
+              </Button>
+            </Box>
+          )}
         </Box>
       </Container>
     </ThemeProvider>
