@@ -175,6 +175,13 @@ app.post("/send-email", async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  // Validate email format
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    console.log("Validation failed: Invalid email format");
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: process.env.LAURA_EMAIL, // Send to your own email
