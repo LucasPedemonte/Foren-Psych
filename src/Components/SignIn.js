@@ -109,7 +109,14 @@ function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
-              sx={{ width: "100%" }}
+              sx={{
+                width: "100%",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+              }}
             />
             <TextField
               margin="normal"
@@ -120,7 +127,14 @@ function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
-              sx={{ width: "100%" }}
+              sx={{
+                width: "100%",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+              }}
             />
             {error && (
               <Typography color="error" variant="body2" align="center">

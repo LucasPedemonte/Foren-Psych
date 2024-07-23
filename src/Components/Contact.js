@@ -112,7 +112,14 @@ function Contact() {
               autoFocus
               value={formData.name}
               onChange={handleChange}
-              sx={{ width: "100%" }}
+              sx={{
+                width: "100%",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+              }}
             />
             <TextField
               margin="normal"
@@ -124,7 +131,14 @@ function Contact() {
               autoComplete="email"
               value={formData.email}
               onChange={handleChange}
-              sx={{ width: "100%" }}
+              sx={{
+                width: "100%",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+              }}
             />
             <TextField
               margin="normal"
@@ -137,7 +151,14 @@ function Contact() {
               rows={4}
               value={formData.message}
               onChange={handleChange}
-              sx={{ width: "100%" }}
+              sx={{
+                width: "100%",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+              }}
             />
             <Button
               type="submit"

@@ -214,7 +214,14 @@ function Home() {
                 autoFocus
                 value={email}
                 onChange={handleEmailChange}
-                sx={{ width: "100%" }}
+                sx={{
+                  width: "100%",
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "white",
+                    },
+                  },
+                }}
               />
               <FileInputWrapper>
                 <label htmlFor="file">Choose File</label>
