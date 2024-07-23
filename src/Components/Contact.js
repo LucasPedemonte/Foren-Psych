@@ -45,10 +45,30 @@ function Contact() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
-    alert("Form submitted! Check the console for details.");
+
+    // Send the form data to the backend
+    try {
+      const response = await fetch("/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("Message sent successfully!");
+      } else {
+        alert(`Failed to send message: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("An error occurred while sending the message.");
+    }
   };
 
   return (
