@@ -25,7 +25,8 @@ app.use(express.static(path.join(__dirname, "build")));
 if (
   !process.env.EMAIL_USER ||
   !process.env.EMAIL_PASS ||
-  !process.env.PRIVATE_AI_API_KEY
+  !process.env.PRIVATE_AI_API_KEY ||
+  !process.env.LAURA_EMAIL
 ) {
   console.error("Missing environment variables");
   process.exit(1);
@@ -164,7 +165,13 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
 
+  console.log("Received contact form submission:");
+  console.log(`Name: ${name}`);
+  console.log(`Email: ${email}`);
+  console.log(`Message: ${message}`);
+
   if (!name || !email || !message) {
+    console.log("Validation failed: All fields are required");
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -174,6 +181,9 @@ app.post("/send-email", async (req, res) => {
     subject: "New Contact Form Submission",
     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
   };
+
+  console.log("Sending email with the following options:");
+  console.log(mailOptions);
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
