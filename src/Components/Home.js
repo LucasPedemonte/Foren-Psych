@@ -105,6 +105,10 @@ function Home() {
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
+    if (uploadedFile && uploadedFile.type !== "application/pdf") {
+      alert("Only PDF files are accepted.");
+      return;
+    }
     setFile(uploadedFile);
   };
 
@@ -240,6 +244,14 @@ function Home() {
                   </RemoveFileButton>
                 )}
               </FileInputWrapper>
+              <Typography
+                variant="body2"
+                color="error"
+                align="center"
+                sx={{ mt: 1 }}
+              >
+                Only PDF files are accepted.
+              </Typography>
               <Button
                 type="submit"
                 fullWidth
