@@ -9,7 +9,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import CustomAvatar from "../Assets/Images/Logo.png"; // Replace with your actual image path
-import { AuthContext } from "../AuthContext"; // Import AuthContext
+import { useAuth } from "../AuthContext"; // Use useAuth hook
 
 const theme = createTheme({
   palette: {
@@ -88,7 +88,7 @@ const RemoveFileButton = styled(Button)(({ theme }) => ({
 }));
 
 function Home() {
-  const { user } = useContext(AuthContext); // Use context to get user
+  const { user, logout } = useAuth();
   const [email, setEmail] = useState(user ? user.email : "");
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false); // Loading state
