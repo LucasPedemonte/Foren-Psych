@@ -9,6 +9,8 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CustomAvatar from "../Assets/Images/Logo.png"; // Replace with your actual image path
+import { setDefaultEventParameters } from "firebase/analytics";
+import { sendSignInLinkToEmail } from "firebase/auth";
 
 const theme = createTheme({
   palette: {
@@ -62,6 +64,12 @@ function Contact() {
       const result = await response.json();
       if (response.ok) {
         alert("Message sent successfully!");
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        });
+        
       } else {
         alert(`Failed to send message: ${result.error}`);
       }

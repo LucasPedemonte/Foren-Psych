@@ -221,6 +221,7 @@ function Home() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                disabled="true"
                 autoFocus
                 value={email}
                 onChange={handleEmailChange}
