@@ -145,7 +145,9 @@ function Home() {
 
       const data = await response.json();
       console.log("Success:", data);
-      alert("File processed successfully");
+      alert(`File processed successfully, an email has been sent to: ${user.email}` );
+      setEmail('');  // Reset email state
+      setFile(null); // Reset file state
     } catch (error) {
       console.error("Error:", error);
       alert(`Error processing file: ${error.message}`);
