@@ -8,7 +8,7 @@ const openai = new OpenAI({
 async function getAssistant(inputString) {
   try {
     const assistant = await openai.beta.assistants.retrieve(
-      "asst_eouXvvXy6xTyFyFDc8BHmbB7"
+      "asst_kpmxgdVKEFW2eJF9VdHLvNsY"
     );
 
     // Create a new thread
