@@ -94,6 +94,10 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false); // Loading state
 
   useEffect(() => {
+    alert("This system is not designed to be 100% accurate. All data processed is NOT stored on our servers and is immediately deidentified upon upload. If you have any questions please click the Contact Us button in the top right. Thank you.");
+  }, []);
+
+  useEffect(() => {
     if (user) {
       setEmail(user.email);
     }
@@ -145,7 +149,8 @@ function Home() {
 
       const data = await response.json();
       console.log("Success:", data);
-      alert("File processed successfully");
+      alert(`File processed successfully, an email has been sent to: ${user.email}` );
+      setFile(null); // Reset file state
     } catch (error) {
       console.error("Error:", error);
       alert(`Error processing file: ${error.message}`);
@@ -215,6 +220,7 @@ function Home() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                disabled="true"
                 autoFocus
                 value={email}
                 onChange={handleEmailChange}
